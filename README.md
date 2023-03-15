@@ -23,10 +23,20 @@ Yale troll domain example
 A DNS server is like a phone book containing IP address
 Associated with each domain. It works weirdly (look at my CS50 notes)
 
-A-Records
+A-Records (Address records)
+They point a domain name to an IP
 
 Local DNS Cache
 When you drive home from work, you don't need turn on a navigation app to know how to get there 
-Similarly, if a computer has previously looked up a domain for it's IP address
+Similarly, if a computer has previously looked up a domain for it's IP address, it can look at it's 
+Own local history instead of searching for the IP again in DNS.
 
-CNAME Record
+A problem with that is that sometimes the IP address for a domain changes
+And the local DNS cache is still using the old IP addresS.
+In order for our computer to get the updated a record, our 
+Cache must be cleared. Since we wipe the memory of ever going to a domain.
+The computer will be forced to use DNS to find the a record
+Instead of using its own history.
+
+CNAME Record (Canonical name records)
+Point a domain name to another domain name
