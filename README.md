@@ -1,7 +1,30 @@
-[DRAFT]
-**THIS IS A CONTINIOUATION OF THE ACTIVE DIRECTORY DOMAIN TUTORIAL**
+**THIS IS A CONTINUATION OF THE [ACTIVE DIRECTORY DOMAIN TUTORIAL](https://github.com/Cham0i/AD-creation-Azure)**
 
-## What is DNS Record?
+# Understanding DNS
+
+**Operating System:**
+- Windows Server 2022
+
+**Commands Used:**
+- ipconfig /flushdns
+- ipconfig /displaydns
+- nslookup [name]
+
+**Chapters:**
+- [What is a DNS Record?](https://github.com/Cham0i/Understanding-DNS/edit/main/README.md#what-is-a-dns-record)
+- [The Record Search Hierarchy](https://github.com/Cham0i/Understanding-DNS/edit/main/README.md#the-record-search-hierarchy)
+  - Cache
+  - Host File
+  - DNS
+- [Accessing DNS Settings in Active Directory](https://github.com/Cham0i/Understanding-DNS/edit/main/README.md#accessing-dns-settings-in-active-directory)
+  - Types of Records
+    - A-Record
+    - CNAME Record
+- [DNS Commands and Configuration](https://github.com/Cham0i/Understanding-DNS/edit/main/README.md#dns-commands-and-configuration)
+  - Commands for problem solving + A Record demonstration
+  - CNAME demonstration
+
+## What is a DNS Record?
 
 The Domain Name System (DNS) is like a phone book but for computers.
 
@@ -13,9 +36,9 @@ Therefore, if you were to call 1-800 and then press the button with the letter R
 So R U N A W A Y would translate to
    7 8 6 2 9 2 9
 
-DNS records work the same way. When you go to google.com what you are really asking is to connect to 8.8.8.8. This is why it's possible to have multiple domains lead to the same website. For example, some comedic genius decided to register the domain [crappyschool.com](crappyschool.com) to route to the University of California at Berkeley's home page. 
+DNS records work the same way. When you go to google.com what you are really asking is to connect to 8.8.8.8. That's why it's possible to have multiple domains lead to the same website; like how a comedic genius decided to register the domain [crappyschool.com](crappyschool.com) to route to the University of California at Berkeley's home page. 
 
-## The record search hierarchy
+## The Record Search Hierarchy
 
 To find an IP Address, a computer refers to the following in this order:
 
@@ -43,11 +66,11 @@ Under your DC's folder click on "Foward Lookup Zones"
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/2.png)
 
-Click on your domain folder (mine is StarbaseISD.com as established in the previous tutorial)
+Click on your domain folder (mine is StarbaseISD.com)
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/3.png)
 
-In here we can find the DNS records. As you can tell we have two records here. One for our DC and another for our Client VM.
+In here we can find the DNS records. As you can tell, we have two records here. One for our DC and another for our Client VM.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/4.png)
 
@@ -61,9 +84,11 @@ By right clicking on open space we can find the option to make a new record.
 
 - CNAME Record (Canonical name records), or aliases, point a domain name to another domain name
 
-## DNS commands and configuration in Active Directory
+## DNS commands and configuration
 
-To demonstrate DNS records, we are going to create a A-Record called CNN which will point to cnn.co.jp (Japanese CNN: 35.73.15.162)
+### Commands for problem solving and A Record demonstration
+
+To demonstrate DNS records, we are going to create an A-Record called CNN which will point to cnn.co.jp (Japanese CNN: 35.73.15.162)
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/6.png)
 
@@ -71,11 +96,11 @@ There it is in our domain host file.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/7.png)
 
-We will attempt to ping Japanese CNN by using our domain's record named "cnn"
+We will attempt to ping CNN Japan by using our domain's record named "cnn"
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/8.png)
 
-The ping sort of worked (this is normal for this website). But we (intentially) made our record point to the wrong CNN website.
+The ping kind of worked (the packet loss is normal for this website). But we (intentially) made our record point to the wrong CNN website.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/9.png)
 
@@ -83,15 +108,15 @@ We can go back to our A-Record and edit the IP Address to point to the correct I
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/10.png)
 
-However, if we try to ping cnn under our domain, the computer will still attempt to ping CNN Japan.
+However, if we try to ping "cnn" under our domain, the computer will still attempt to ping CNN Japan.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/11.png)
 
-Remember our record search hierarchy? The computer is currently preferring to use its cache rather than its host file. Using command **nslookup [name]** we can find the record in the domain's host file. Using command **ipconfig /displaydns** we can look at our computer's cache.
+Remember our record search hierarchy? The computer is currently preferring to use its cache rather than its host file. Using the command **nslookup [name]** we can find the record for "cnn" in our Domain's host file. Using the command **ipconfig /displaydns** we can look at our computer's cache records.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/13.png)
 
-The IP Addresses don't match, and the cache is being prefered. What's the solution to this problem? The cache must be cleared. Once we wipe the cache the computer will be forced to use DNS (our domain's DNS host file) to find the A-record.
+The IP Addresses don't match because the cache is being prefered. What's the solution to this problem? The cache must be cleared. Once we wipe the cache the computer will be forced to use DNS (our domain's DNS host file) to find the A-record.
 
 To do this we use the command **ipconfig \flushdns**
 
@@ -101,11 +126,13 @@ By the way, you might not be able to run the command unless you are using admins
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/15.png)
 
-If we check our cache again, we will see nothing; and if we ping cnn again, we will ping the correct IP Address.
+If we check our cache again, we will see nothing; and if we ping "cnn" again, we will ping the correct IP Address.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/16.png)
 
-Just for bonus practice, we can also demonstrate how CNAME records work. First we will go back to our records and create a CNAME record.
+### CNAME Demonstration
+
+Just for bonus practice, we can also demonstrate how CNAME records work. First, we will go back to our records and create a CNAME record.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/17.png)
 
@@ -116,3 +143,5 @@ This one will be named "notfakenews" and it will point to our "cnn" domain name.
 When we ping "notfakenews" it will point the computer to look for the domain "cnn" which in turn will ping the same IP.
 
 ![alt text](https://github.com/Cham0i/Understanding-DNS/blob/main/DNS_pics/19.png)
+
+Every CNAME record will eventually lead to an A-Record. This means changing that one A-Record to another IP Address will also automatically change the CNAME Records, based of the domain name from the original A-Record, to that new IP Address. This saves you the headache of having to edit 30 different A-Records to point to a new IP Address.
